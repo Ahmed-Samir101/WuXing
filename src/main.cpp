@@ -126,7 +126,7 @@ void renderPlayer(Player& player) {
         // Animation frames for walking
         //int frame = (SDL_GetTicks() / 200) % 2; // Change every 200 ms
         if (player.isMovingLeft) {
-            SDL_RenderCopy(renderer, spriteSheet2, &srcRect, &rect);
+            SDL_RenderCopyEx(renderer, spriteSheet1, &srcRect, &rect, 0, NULL, SDL_FLIP_HORIZONTAL);
             cT = 1;
         } else {
             SDL_RenderCopy(renderer, spriteSheet1, &srcRect, &rect);
