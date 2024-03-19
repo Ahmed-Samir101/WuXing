@@ -1,12 +1,14 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <iostream>
+#include <Windows.h>
+#include <time.h>
 
 //Code created by xiaolong(ç´¢é‡Œæ›¼ï¼‰, at 2:03AM 2024/3/6
 
 // Constants for screen dimensions and player attributes
-const int SCREEN_WIDTH = 1080;
-const int SCREEN_HEIGHT = 700;
+const int SCREEN_WIDTH = 1180;
+const int SCREEN_HEIGHT = 800;
 const int PLAYER_WIDTH = 270;
 const int PLAYER_HEIGHT = 270;
 const int JUMP_FORCE = 20;
@@ -19,6 +21,8 @@ int cT = 2;
 int fT1;
 int fT2;
 int fT3;
+int fT4;
+SDL_Event event;
 
 // SDL variables for window, renderer, and textures
 SDL_Window* window = nullptr;
@@ -34,13 +38,12 @@ struct Player {
     bool isJumping; // Flag for jump state
     bool isMovingLeft; // Flag for left movement
     bool isMovingRight; // Flag for right movement
+    bool isAttacking; //Flag for attacking facing left
 };
 
 //Code created by xiaolong(ç´¢é‡Œæ›¼ï¼‰, at 9ï¼š00pm 2024/3/8
-
 // Function to handle user input events
 void handleInput(Player& player) {
-    SDL_Event event;
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT) {
             exit(0);
@@ -49,23 +52,29 @@ void handleInput(Player& player) {
             exit(0);
         }
         if (event.type == SDL_KEYDOWN) {
-            if (event.key.keysym.sym == SDLK_SPACE && !player.isJumping) {
+            if (event.key.keysym.sym == SDLK_j) {
                 player.dy = -JUMP_FORCE;
                 player.isJumping = true;
             }
-            if (event.key.keysym.sym == SDLK_LEFT) {
+            if (event.key.keysym.sym == SDLK_a) {
                 player.isMovingLeft = true;
             }
-            if (event.key.keysym.sym == SDLK_RIGHT) {
+            if (event.key.keysym.sym == SDLK_d) {
                 player.isMovingRight = true;
+            }
+            if (event.key.keysym.sym == SDLK_k) {
+                player.isAttacking = true;
             }
         }
         if (event.type == SDL_KEYUP) {
-            if (event.key.keysym.sym == SDLK_LEFT) {
+            if (event.key.keysym.sym == SDLK_a) {
                 player.isMovingLeft = false;
             }
-            if (event.key.keysym.sym == SDLK_RIGHT) {
+            if (event.key.keysym.sym == SDLK_d) {
                 player.isMovingRight = false;
+            }
+            if (event.key.keysym.sym == SDLK_k) {
+                player.isAttacking = false;
             }
         }
     }
@@ -97,7 +106,7 @@ void updatePlayer(Player& player) {
         player.dy = 0;
         player.isJumping = false;
     }
-    printf("%d\n", player.x);
+    //printf("%d\n", player.x);
 }
 
 //Code created by åˆ˜ç‚ç’‡ and èµµå—æ˜Ÿ, at 6:30pm 2024/3/10
@@ -115,13 +124,15 @@ void renderPlayer(Player& player) {
     SDL_Rect srcRect = {fT1 * 32, 3*32 , 32, 32};
     SDL_Rect srcRect2 = {fT2 * 32, 0, 32, 32};
     SDL_Rect srcRect3 = {fT3 * 32, 4 * 32, 32, 32};
+    SDL_Rect srcRect4 ={fT4 * 32, 8 * 32, 32, 32};
     fT1 = (SDL_GetTicks()/ 200) % 8;
     fT2 = (SDL_GetTicks()/ 200) % 2;
     fT3 = (SDL_GetTicks()/ 200) % 6;
+    fT4 = (SDL_GetTicks()/ 200) % 8;
     //printf("%d\n", cT);
-    SDL_Texture* currentTexture = nullptr;
+    // SDL_Texture* currentTexture = nullptr;
     SDL_RendererFlip flipType = SDL_FLIP_NONE;
-
+    
     if (player.isMovingLeft || player.isMovingRight) {
         // Animation frames for walking
         //int frame = (SDL_GetTicks() / 200) % 2; // Change every 200 ms
@@ -131,15 +142,17 @@ void renderPlayer(Player& player) {
         } else {
             SDL_RenderCopy(renderer, spriteSheet1, &srcRect, &rect);
             cT = 2;
-        }
-    } else if(player.isJumping){
+        } 
+    } 
+    if(player.isJumping){
         if (cT == 1) {
             flipType = SDL_FLIP_HORIZONTAL;
         } else{
             flipType = SDL_FLIP_NONE;
         }
         SDL_RenderCopyEx(renderer, spriteSheet1, &srcRect3, &rect, 0, NULL, flipType);
-    } else {
+    } 
+    else {
         // Default texture when standing still
         if (cT == 1) {
             flipType = SDL_FLIP_HORIZONTAL;
@@ -147,6 +160,16 @@ void renderPlayer(Player& player) {
             flipType = SDL_FLIP_NONE;
         }
         SDL_RenderCopyEx(renderer, spriteSheet1, &srcRect2, &rect, 0, NULL, flipType);
+    }  
+    if(player.isAttacking){
+        if(cT==1)
+        {
+            flipType = SDL_FLIP_HORIZONTAL; 
+        }
+        else{
+            flipType = SDL_FLIP_NONE;
+        }
+        SDL_RenderCopyEx(renderer, spriteSheet1, &srcRect4, &rect, 0, NULL, flipType);  
     }
     //SDL_RenderCopy(renderer, currentTexture, &srcRect2, &rect);
     //SDL_RenderCopyEx(renderer, spriteSheet1, &srcRect2, &rect, 0, NULL, flipType);
