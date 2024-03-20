@@ -30,6 +30,7 @@ SDL_Renderer* renderer = nullptr;
 SDL_Texture* backgroundTexture = nullptr;
 SDL_Texture* spriteSheet1 = nullptr;
 SDL_Texture* spriteSheet2 = nullptr;
+SDL_Texture* spriteSheet3 = nullptr;
 
 // Struct to represent the player with various attributes
 struct Player {
@@ -38,8 +39,11 @@ struct Player {
     bool isJumping; // Flag for jump state
     bool isMovingLeft; // Flag for left movement
     bool isMovingRight; // Flag for right movement
-    bool isAttacking; //Flag for attacking facing left
+    bool firstskill; //Flag for attacking using first skill 
+    bool secondskill; //Flag for attacking using second skill 
 };
+
+//SHOOTBALL
 
 //Code created by xiaolong(ç´¢é‡Œæ›¼ï¼‰, at 9ï¼š00pm 2024/3/8
 // Function to handle user input events
@@ -63,7 +67,10 @@ void handleInput(Player& player) {
                 player.isMovingRight = true;
             }
             if (event.key.keysym.sym == SDLK_k) {
-                player.isAttacking = true;
+                player.firstskill = true;
+            }
+            if (event.key.keysym.sym == SDLK_l) {
+                player.secondskill = true;
             }
         }
         if (event.type == SDL_KEYUP) {
@@ -74,7 +81,10 @@ void handleInput(Player& player) {
                 player.isMovingRight = false;
             }
             if (event.key.keysym.sym == SDLK_k) {
-                player.isAttacking = false;
+                player.firstskill = false;
+            }
+            if (event.key.keysym.sym == SDLK_l) {
+                player.secondskill = false;
             }
         }
     }
@@ -125,6 +135,7 @@ void renderPlayer(Player& player) {
     SDL_Rect srcRect2 = {fT2 * 32, 0, 32, 32};
     SDL_Rect srcRect3 = {fT3 * 32, 4 * 32, 32, 32};
     SDL_Rect srcRect4 ={fT4 * 32, 8 * 32, 32, 32};
+    SDL_Rect srcRect5 ={fT3 * 32, 22 * 32, 32, 32};//shoot ball
     fT1 = (SDL_GetTicks()/ 200) % 8;
     fT2 = (SDL_GetTicks()/ 200) % 2;
     fT3 = (SDL_GetTicks()/ 200) % 6;
@@ -161,7 +172,7 @@ void renderPlayer(Player& player) {
         }
         SDL_RenderCopyEx(renderer, spriteSheet1, &srcRect2, &rect, 0, NULL, flipType);
     }  
-    if(player.isAttacking){
+    if(player.firstskill){
         if(cT==1)
         {
             flipType = SDL_FLIP_HORIZONTAL; 
@@ -170,6 +181,16 @@ void renderPlayer(Player& player) {
             flipType = SDL_FLIP_NONE;
         }
         SDL_RenderCopyEx(renderer, spriteSheet1, &srcRect4, &rect, 0, NULL, flipType);  
+    }
+    if(player.secondskill){
+        if(cT==1)
+        {
+            flipType = SDL_FLIP_HORIZONTAL; 
+        }
+        else{
+            flipType = SDL_FLIP_NONE;
+        }
+        SDL_RenderCopyEx(renderer, spriteSheet3, &srcRect5, &rect, 0, NULL, flipType);  
     }
     //SDL_RenderCopy(renderer, currentTexture, &srcRect2, &rect);
     //SDL_RenderCopyEx(renderer, spriteSheet1, &srcRect2, &rect, 0, NULL, flipType);
@@ -187,11 +208,13 @@ int main(int argc, char* argv[]) {
     SDL_Surface* surfaceBackground = IMG_Load("./assets/background2.jpg");
     SDL_Surface* surfaceSpriteSheet1 = IMG_Load("./assets/sheet4.png");
     SDL_Surface* surfaceSpriteSheet2 = IMG_Load("./assets/sheet5.png");
+    SDL_Surface* surfaceSpriteSheet3 = IMG_Load("./assets/sheet.png");
 
     // Create textures from loaded surfaces
     backgroundTexture = SDL_CreateTextureFromSurface(renderer, surfaceBackground);
     spriteSheet1 = SDL_CreateTextureFromSurface(renderer, surfaceSpriteSheet1);
     spriteSheet2 = SDL_CreateTextureFromSurface(renderer, surfaceSpriteSheet2);
+    spriteSheet3 = SDL_CreateTextureFromSurface(renderer, surfaceSpriteSheet3);//shoot ball
 
     Player player = {100, 100, 0, 0, false}; // Initialize the player object
 
