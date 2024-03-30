@@ -1,7 +1,9 @@
 #include <SDL2/SDL.h>
+#include <iostream>
 #include <stdlib.h>
 #include <SDL2/SDL_image.h>
-
+#include <SDL2/SDL_ttf.h>
+#include <time.h>
 // Constants for screen dimensions and player attributes
 
 const int WINDOW_WIDTH = 1080;
