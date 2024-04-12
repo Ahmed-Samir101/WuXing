@@ -2,9 +2,10 @@
 #include <stdlib.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-// #include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_ttf.h>
 #include <time.h>
+#include <string>
 
 // Constants for screen dimensions and player attributes
 
@@ -21,6 +22,8 @@ const int PLAYERSPEED = 6;
 const int ENEMYSPEED = 1;
 const int GRAVITY = 1;
 const char* filename = "./assets/main_menu.mp4";
+const int COLLISION_BUFFER = 230;
+const float decreaseRate = 0.01f;
 
 int ENEMY_WIDTH = 320;
 int ENEMY_HEIGHT = 320;
@@ -36,15 +39,23 @@ int fT4;
 int fT5;
 int fT6;
 int fT7;
+int xpValue = 0;
+int yLimit = 120;
 int playerDamage = 6;
+int startcooldown = 0;
 bool isPaused = false;
 bool renderMap = false;
 bool isLosed = false;
 bool isWin = false;
 bool mapRendered = false; // 在函数外部定义，用于跟踪latermap是否已经完全渲染
+bool youwinRendered = false;
+bool isMusicPlaying = false;
+bool chooseclosemusic = false;
+bool voiceRendered = false;
+bool isScroll = false;
+bool skills[7] = {true, false, false, false, false, false, false};
 Uint32 lastKeyPressTime = 0;
-int yLimit = 120;
-const int COLLISION_BUFFER = 230;
+Uint32 lastAttackTime = 0;
 
 enum GameState
 {
@@ -53,8 +64,10 @@ enum GameState
     HELP,
     REALHELP,
     SETTING,
+    YOUWIN,
     MAP
 };
+
 int ZERO = 0;
 int FIRST = 1;
 int SECOND = 2;
@@ -85,11 +98,20 @@ SDL_Surface* enemySurface5 = IMG_Load("./assets/enemySheet5.png");
 SDL_Surface* enemySurface6 = IMG_Load("./assets/enemySheet6.png");
 SDL_Surface* enemySurface7 = IMG_Load("./assets/enemySheet7.png");
 SDL_Surface* enemySurface8 = IMG_Load("./assets/enemySheet8.png");
+SDL_Surface* text = nullptr;
 
 // SDL variables for window, renderer, and textures
 SDL_Window* window = nullptr;
 SDL_Renderer* renderer = nullptr;
+SDL_Texture* currentBackgroundTexture = nullptr;
 SDL_Texture* backgroundTexture = nullptr;
+SDL_Texture* bg1Texture = nullptr;
+SDL_Texture* bg2Texture = nullptr;
+SDL_Texture* bg3Texture = nullptr;
+SDL_Texture* bg4Texture = nullptr;
+SDL_Texture* bg5Texture = nullptr;
+SDL_Texture* bg6Texture = nullptr;
+SDL_Texture* shieldTexture = nullptr;
 SDL_Texture* spriteSheet1 = nullptr;
 SDL_Texture* spriteSheet2 = nullptr;
 SDL_Texture* fireSheet = nullptr;
@@ -140,13 +162,19 @@ SDL_Texture* thirteenthwin = nullptr;
 SDL_Texture* fourteenth = nullptr;
 SDL_Texture* fourteenthwin = nullptr;
 SDL_Texture* fifteenth = nullptr;
-
 SDL_Texture* youwin = nullptr;
 SDL_Texture* logoTexture = nullptr;
 SDL_Texture* heartTexture = nullptr;
+SDL_Texture* textTexture = nullptr;
+SDL_Texture* soundON = nullptr;
+SDL_Texture* soundOFF = nullptr;
+SDL_Texture* scroll_1 = nullptr;
+SDL_Texture* scroll_2 = nullptr;
+
+Mix_Music* music;
 
 // Struct to represent the player with various attributes
-struct Character
+struct Player
 {
     int x, y;           // Position coordinates
     int dx, dy;         // Velocity components
@@ -154,9 +182,12 @@ struct Character
     bool isMovingLeft;  // Flag for left movement
     bool isMovingRight; // Flag for right movement
     int jumpCount;      // amount of jumps done in succession in one instance
-    int health;         // health points of character
+    int health;         // health points of Player
+    int cooldown;
     bool playerAttack;
     bool isBlocking;
+    int width;
+    int height;
 };
 
 struct Enemy
@@ -167,7 +198,7 @@ struct Enemy
     bool isMovingLeft;  // Flag for left movement
     bool isMovingRight; // Flag for right movement
     int jumpCount;      // amount of jumps done in succession in one instance
-    int health;         // health points of character
+    int health;         // health points of Player
     bool playerAttack;  // whether or not enemy is attacking
     int bendingType;
     int enemyWidth;
@@ -191,19 +222,21 @@ struct Bending
     SDL_Texture* texture;
 };
 
-Character player = { 100, 100, 0, 0, false, false, false, 0, 100, false }; // Initialize the player object
+Player player = { 100, 100, 0, 0, false, false, false, 0, 100, 0,false, false, 32, 32}; // Initialize the player object
 Enemy enemy = { 500, 310, 0, 0, false, false, false, 0, 100, false, 1, 130, 128, 8, 4, 2 };
 
 Bending playerbend = { 0, 53, 53, 10, false, 1, 110, 125, 125, nullptr };
 Bending enemybend = { 0, 53, 53, 10, false, 1, 110, 125, 125, nullptr };
 
-SDL_Rect playButton = { 400, 360, 280, 60 };
-SDL_Rect logoRect = { (WINDOW_WIDTH - 260) / 2, 10, 260, 260 };
-SDL_Rect heartRect1 = { 0, 0, 65, 65 };
-SDL_Rect heartRect2 = { 650, 0, 65, 65 };
-SDL_Rect helpButton = { (WINDOW_WIDTH - 280) / 2, 465, 280, 60 };
-SDL_Rect settingrButton = { (WINDOW_WIDTH - 280) / 2, 570, 280, 60 };
-SDL_Rect returnbackButton = { WINDOW_WIDTH - 200, 10, 120, 120 };
-SDL_Rect youwinRect = { 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT };
-SDL_Rect rect = { 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT };
+SDL_Rect voiceRect          = { (WINDOW_WIDTH-180)/2, (WINDOW_HEIGHT-130)/2, 180, 180 };
+SDL_Rect helpButton         = { (WINDOW_WIDTH - 280) / 2, 465, 280, 60 };
+SDL_Rect settingButton      = { (WINDOW_WIDTH - 280) / 2, 570, 280, 60 };
 SDL_Rect realhelpButtonRect = { WINDOW_WIDTH - 200, 470, 180, 70 };
+SDL_Rect returnbackButton   = { WINDOW_WIDTH - 200, 10, 140, 110 };
+SDL_Rect logoRect   = { (WINDOW_WIDTH - 290) / 2, 10, 290, 290 };
+SDL_Rect youwinRect = { (WINDOW_WIDTH-440)/2, 50, 440, 240 };
+SDL_Rect rect       = { 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT };
+SDL_Rect scrollRect = { (WINDOW_WIDTH-550)/2, WINDOW_HEIGHT/2, 550, 320 };
+SDL_Rect playButton = { 400, 360, 280, 60 };
+SDL_Rect heartRect2 = { 650, 0, 65, 65 };
+SDL_Rect heartRect1 = { 0, 0, 65, 65 };

@@ -5,12 +5,12 @@ void setup() {
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Init(SDL_INIT_AUDIO);
     SDL_Init(SDL_INIT_TIMER);
-    TTF_Init;
     //Mix_Init(MIX_INIT_MP3);                            // Initialize the audio library (for MP3 support)
     //Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024); // Open the audio device*/
 
     window = SDL_CreateWindow(NULL, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
     //Mix_Music *music = Mix_LoadMUS("./assets/m.mp3");
 
     // Load textures for the character facing left and right, and background
@@ -125,6 +125,7 @@ void setup() {
     fourteenthwin = SDL_CreateTextureFromSurface(renderer, surfaceFourteenthWinMap);
     fifteenth = SDL_CreateTextureFromSurface(renderer, surfaceFifteenthWinMap);
     youwin = SDL_CreateTextureFromSurface(renderer, surfaceYouWin);
+
 }
 
 // Function to render the background scene
@@ -140,9 +141,6 @@ void renderScene() {
     SDL_RenderFillRect(renderer, &hpEnemyBarRect);
     SDL_RenderCopy(renderer, heartTexture, NULL, &heartRect1);
     SDL_RenderCopy(renderer, heartTexture, NULL, &heartRect2);
-
-    // Render player health value
-    SDL_Color textColor = { 255, 0, 0, 255 }; // White color for the text
 }
 // Function to render the player character with animations
 void renderPlayer()

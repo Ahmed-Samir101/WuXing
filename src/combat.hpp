@@ -122,7 +122,6 @@ int bendingSkill(int& bending, SDL_Texture* texture) {
 
     if (player.playerAttack == true) {
         if (playerCollisionBending(dstRect, bend, initialDir)) {
-            printf("collision\n");
             playerAttack();
             player.playerAttack = false;
         }

@@ -1,9 +1,9 @@
-#include "./combat.hpp"
+#include "./combat.cpp"
 
 SDL_Rect collPlayer = { player.x, 0, PLAYER_WIDTH, PLAYER_HEIGHT };
 SDL_Rect collEnemy = { enemy.x, 0, ENEMY_WIDTH, ENEMY_HEIGHT };
 
-bool checkCollision(const Character& spriteA, const Enemy& spriteB) {
+bool checkCollision(const Player& spriteA, const Enemy& spriteB) {
     // Calculate the bounding rectangles of the sprites
     SDL_Rect rectA = { spriteA.x, spriteA.y, PLAYER_WIDTH - COLLISION_BUFFER, PLAYER_HEIGHT };
     SDL_Rect rectB = { spriteB.x, spriteB.y, spriteB.enemyWidth, spriteB.enemyHeight + 30 };
@@ -152,51 +152,7 @@ void checkWin() {
     else if (enemy.health < 10) {
         printf("You win\n");
         isWin = true;
-        if (mission == ZERO) {
-            mission = FIRST;
-        }
-        else if (mission == FIRST) {
-            mission = SECOND;
-        }
-        else if (mission == SECOND) {
-            mission = THIRD;
-        }
-        else if (mission == THIRD) {
-            mission = FOURTH;
-        }
-        else if (mission == FOURTH) {
-            mission = FIFTH;
-        }
-        else if (mission == FIFTH) {
-            mission = SIXTH;
-        }
-        else if (mission == SIXTH) {
-            mission = SEVENTH;
-        }
-        else if (mission == SEVENTH) {
-            mission = EIGHT;
-        }
-        else if (mission == EIGHT) {
-            mission = NINTH;
-        }
-        else if (mission == NINTH) {
-            mission = TENTH;
-        }
-        else if (mission == TENTH) {
-            mission = ELEVENTH;
-        }
-        else if (mission == ELEVENTH) {
-            mission = TWELVETH;
-        }
-        else if (mission == TWELVETH) {
-            mission = THIRTEENTH;
-        }
-        else if (mission == THIRTEENTH) {
-            mission = FOURTEENTH;
-        }
-        else if (mission == FOURTEENTH) {
-            mission = FIFTEENTH;
-        }
+        //gameState = YOUWIN;
     }
 }
 
@@ -204,6 +160,7 @@ void checkWin() {
 int main(int argc, char* argv[]) {
 
     setup();
+
     // playVideo();
     spriteSheet2 = SDL_CreateTextureFromSurface(renderer, enemySurface1);
     SDL_TimerID timerId = SDL_AddTimer(1500, enemyBendingInterval, nullptr);
@@ -212,43 +169,75 @@ int main(int argc, char* argv[]) {
         if (checkCollision(player, enemy)) bounce();
         if (wallCollision()) dont();
 
-        if (checkCollision(player, enemy)) {
-            printf("collision!\n");
-        }
         checkWin();
 
         if (gameState == MENU) {
-            renderMainMenu(renderer);
+            if (isMusicPlaying && chooseclosemusic == false) {
+                Mix_HaltMusic(); // 停止音乐播放
+                isMusicPlaying = false; // 重置音乐播放状态
+            }
+            renderMainMenu();
             handleInputatMenu();
         }
         else if (gameState == HELP) {
-            renderHelp(renderer);
+            if (isMusicPlaying && chooseclosemusic == false) {
+                Mix_HaltMusic(); // 停止音乐播放
+                isMusicPlaying = false; // 重置音乐播放状态
+            }
+            renderHelp();
             handleInputatHelp();
         }
         else if (gameState == REALHELP) {
-            renderRealHelp(renderer);
+            if (isMusicPlaying && chooseclosemusic == false) {
+                Mix_HaltMusic(); // 停止音乐播放
+                isMusicPlaying = false; // 重置音乐播放状态
+            }
+            renderRealHelp();
             handleInputatRealHelp();
         }
         else if (gameState == SETTING) {
-            renderSetting(renderer);
+            if (isMusicPlaying && chooseclosemusic == false) {
+                Mix_HaltMusic(); // 停止音乐播放
+                isMusicPlaying = false; // 重置音乐播放状态
+            }
+            renderSetting();
             handleInputatSetting();
+            //if (soundON == true) {
+            //    Mix_PlayMusic(music, -1); // -1 means looping indefinitely
+            //}
+            //else {
+            //    Mix_HaltMusic(); // 停止音乐播放
+            //}
         }
         else if (gameState == PLAYING) {
-
+            if (!isMusicPlaying && chooseclosemusic==false) {
+                printf("lalalal\n");
+                Mix_PlayMusic(music, -1); // -1 表示无限循环
+                isMusicPlaying = true; // 设置音乐为播放状态
+            }
             if (!isLosed && !isPaused && !isWin) {
-                renderScene();        // Render background scene
                 updatePlayer(); // Update player state
                 updateEnemy();
-                renderPlayer(); // Render player character
+                renderScene();        // Render background scene
+                renderPlayer(); // Render player Player
                 bendingSkill(playerbend.bending, playerbend.texture);
+                blockingSkill(playerbend.bending, shieldTexture);
                 enemybending();
-                renderEnemy(); // Render enemy character
+                renderEnemy(); // Render enemy Player
             }
             else if (isLosed && !isPaused && !isWin) {
-                renderLoseMenu(renderer); // Render lose menu when game is losed
+                renderLoseMenu(); // Render lose menu when game is losed
             }
             else if (!isLosed && !isPaused && isWin) {
-                renderYouWin(renderer); // Render lose menu when game is losed
+                if(mission == FIRST) {
+                    renderWinAndScroll(renderer, scroll_1);
+                }
+                else if(mission == SECOND) {
+                    renderWinAndScroll(renderer, scroll_2);
+                } else {
+                    renderYouWin();
+                }
+                handleInputatYouwin();
                 resetGameState();
             }
             handleInput();
@@ -315,14 +304,15 @@ int main(int argc, char* argv[]) {
         // renderScene();      // Render background scene
         // updatePlayer();     // Update player state
         // updateEnemy();
-        // renderPlayer();     // Render player character
+        // renderPlayer();     // Render player Player
         // bendingSkill(playerbend.bending,playerbend.texture);
         // enemybending();
-        // renderEnemy();      // Render enemy character
+        // renderEnemy();      // Render enemy Player
         SDL_RenderPresent(renderer);
         SDL_Delay(10);      // Delay for smoother animation
     }
-
+    Mix_FreeMusic(music);
+    Mix_CloseAudio();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
