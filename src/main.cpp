@@ -164,6 +164,10 @@ int main(int argc, char* argv[]) {
     // playVideo();
     spriteSheet2 = SDL_CreateTextureFromSurface(renderer, enemySurface1);
     SDL_TimerID timerId = SDL_AddTimer(1500, enemyBendingInterval, nullptr);
+    // if (Mix_PlayMusic(music, -1) < 0)
+    //     {
+    //         std::cout << "Failed to play music: " << Mix_GetError() << std::endl;
+    //     }
     while (gameisRunning) {
         SDL_RenderClear(renderer);
         if (checkCollision(player, enemy)) bounce();
@@ -172,34 +176,34 @@ int main(int argc, char* argv[]) {
         checkWin();
 
         if (gameState == MENU) {
-            if (isMusicPlaying && chooseclosemusic == false) {
-                Mix_HaltMusic(); // 停止音乐播放
-                isMusicPlaying = false; // 重置音乐播放状态
-            }
+            // if (isMusicPlaying && chooseclosemusic == false) {
+            //     Mix_HaltMusic(); // 停止音乐播放
+            //     isMusicPlaying = false; // 重置音乐播放状态
+            // }
             renderMainMenu();
             handleInputatMenu();
         }
         else if (gameState == HELP) {
-            if (isMusicPlaying && chooseclosemusic == false) {
-                Mix_HaltMusic(); // 停止音乐播放
-                isMusicPlaying = false; // 重置音乐播放状态
-            }
+            // if (isMusicPlaying && chooseclosemusic == false) {
+            //     Mix_HaltMusic(); // 停止音乐播放
+            //     isMusicPlaying = false; // 重置音乐播放状态
+            // }
             renderHelp();
             handleInputatHelp();
         }
         else if (gameState == REALHELP) {
-            if (isMusicPlaying && chooseclosemusic == false) {
-                Mix_HaltMusic(); // 停止音乐播放
-                isMusicPlaying = false; // 重置音乐播放状态
-            }
+            // if (isMusicPlaying && chooseclosemusic == false) {
+            //     Mix_HaltMusic(); // 停止音乐播放
+            //     isMusicPlaying = false; // 重置音乐播放状态
+            // }
             renderRealHelp();
             handleInputatRealHelp();
         }
         else if (gameState == SETTING) {
-            if (isMusicPlaying && chooseclosemusic == false) {
-                Mix_HaltMusic(); // 停止音乐播放
-                isMusicPlaying = false; // 重置音乐播放状态
-            }
+            // if (isMusicPlaying && chooseclosemusic == false) {
+            //     Mix_HaltMusic(); // 停止音乐播放
+            //     isMusicPlaying = false; // 重置音乐播放状态
+            // }
             renderSetting();
             handleInputatSetting();
             //if (soundON == true) {
@@ -210,11 +214,11 @@ int main(int argc, char* argv[]) {
             //}
         }
         else if (gameState == PLAYING) {
-            if (!isMusicPlaying && chooseclosemusic==false) {
-                printf("lalalal\n");
-                Mix_PlayMusic(music, -1); // -1 表示无限循环
-                isMusicPlaying = true; // 设置音乐为播放状态
-            }
+            // if (!isMusicPlaying && chooseclosemusic==false) {
+            //     printf("lalalal\n");
+            //     Mix_PlayMusic(music, -1); // -1 表示无限循环
+            //     isMusicPlaying = true; // 设置音乐为播放状态
+            // }
             if (!isLosed && !isPaused && !isWin) {
                 updatePlayer(); // Update player state
                 updateEnemy();

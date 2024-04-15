@@ -131,9 +131,9 @@ void handleInputatMenu() {
                 resetGameState();
                 gameState = PLAYING;
             }
-            else if (mouseX > settingrButton.x && mouseX < settingrButton.x + settingrButton.w &&
-                mouseY > settingrButton.y && mouseY < settingrButton.y + settingrButton.h) {
-                changeColor(setting, settingrButton);
+            else if (mouseX > settingButton.x && mouseX < settingButton.x + settingButton.w &&
+                mouseY > settingButton.y && mouseY < settingButton.y + settingButton.h) {
+                changeColor(setting, settingButton);
                 gameState = SETTING;
             }
             else if (mouseX > helpButton.x && mouseX < helpButton.x + helpButton.w &&
@@ -253,9 +253,9 @@ void handleInput() {
                 resetGameState();
 
             }
-            else if (mouseX > settingrButton.x && mouseX < settingrButton.x + settingrButton.w &&
-                mouseY > settingrButton.y && mouseY < settingrButton.y + settingrButton.h && isLosed && !isPaused) {
-                changeColor(setting, settingrButton);
+            else if (mouseX > settingButton.x && mouseX < settingButton.x + settingButton.w &&
+                mouseY > settingButton.y && mouseY < settingButton.y + settingButton.h && isLosed && !isPaused) {
+                changeColor(setting, settingButton);
                 gameState = MENU;
                 isLosed = false;
                 return;

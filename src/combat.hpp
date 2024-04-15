@@ -31,14 +31,6 @@ bool wallCollision() {
     return false;
 }
 
-// int enemyBedningAnimation(bool con, int rowNum, int w, int h) {
-//     if(con) {
-
-//     }else {
-
-//     }
-// }
-
 int enemybending() {
     static int initialX = enemy.x;
     static int initialY = enemy.y;

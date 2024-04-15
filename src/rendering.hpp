@@ -5,13 +5,27 @@ void setup() {
     SDL_Init(SDL_INIT_VIDEO);
     SDL_Init(SDL_INIT_AUDIO);
     SDL_Init(SDL_INIT_TIMER);
-    //Mix_Init(MIX_INIT_MP3);                            // Initialize the audio library (for MP3 support)
-    //Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024); // Open the audio device*/
+    Mix_Init(MIX_INIT_MP3);                            // Initialize the audio library (for MP3 support)
+    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
+        if (SDL_Init(SDL_INIT_AUDIO) < 0) {
+        std::cout << "SDL initialization failed: " << SDL_GetError() << std::endl;
+    }
+
+    // Initialize SDL_mixer
+    int mixFlags = MIX_INIT_MP3 | MIX_INIT_OGG | MIX_INIT_FLAC;
+    int mixInitResult = Mix_Init(mixFlags);
+    if ((mixInitResult & mixFlags) != mixFlags) {
+        std::cout << "SDL_mixer initialization failed for required audio formats: " << Mix_GetError() << std::endl;
+    }
+
+    // Open audio
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+        std::cout << "SDL_mixer audio initialization failed: " << Mix_GetError() << std::endl;
+    }
 
     window = SDL_CreateWindow(NULL, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-    //Mix_Music *music = Mix_LoadMUS("./assets/m.mp3");
 
     // Load textures for the character facing left and right, and background
     SDL_Surface* surfaceBackground = IMG_Load("./assets/background1.png");
@@ -141,6 +155,11 @@ void renderScene() {
     SDL_RenderFillRect(renderer, &hpEnemyBarRect);
     SDL_RenderCopy(renderer, heartTexture, NULL, &heartRect1);
     SDL_RenderCopy(renderer, heartTexture, NULL, &heartRect2);
+
+    if (music == nullptr) {
+        printf("No Music\n");
+    }
+    
 }
 // Function to render the player character with animations
 void renderPlayer()
@@ -273,7 +292,7 @@ void  renderLoseMenu(SDL_Renderer* renderer) {
     SDL_SetTextureAlphaMod(setting, 255);
     SDL_SetTextureAlphaMod(play, 255);
     SDL_RenderCopy(renderer, backgroundTexture, NULL, &rect);
-    SDL_RenderCopy(renderer, setting, NULL, &settingrButton);
+    SDL_RenderCopy(renderer, setting, NULL, &settingButton);
     SDL_RenderCopy(renderer, play, NULL, &playButton);
 }
 
@@ -283,7 +302,7 @@ void  renderMainMenu(SDL_Renderer* renderer) {
     SDL_SetTextureAlphaMod(play, 255);
     SDL_RenderCopy(renderer, backgroundTexture, NULL, &rect);
     SDL_RenderCopy(renderer, logoTexture, NULL, &logoRect);
-    SDL_RenderCopy(renderer, setting, NULL, &settingrButton);
+    SDL_RenderCopy(renderer, setting, NULL, &settingButton);
     SDL_RenderCopy(renderer, play, NULL, &playButton);
     SDL_RenderCopy(renderer, help, NULL, &helpButton);
 

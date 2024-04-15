@@ -6,14 +6,23 @@ void setup() {
     SDL_Init(SDL_INIT_AUDIO);
     SDL_Init(SDL_INIT_TIMER);
     TTF_Init();
-    Mix_Init(MIX_INIT_MP3);                            // Initialize the audio library (for MP3 support)
-    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048); // Open the audio device*/
+    int flags = MIX_INIT_MP3;
+    if ((Mix_Init(flags) & flags) != flags)
+    {
+        std::cout << "Failed to initialize SDL_mixer: " << Mix_GetError() << std::endl;
+    }
+
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+    {
+        std::cout << "Failed to open audio: " << Mix_GetError() << std::endl;
+    }
 
     window = SDL_CreateWindow(NULL, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-    Mix_Music *music = Mix_LoadMUS("./assets/m.mp3");
-    if (music == nullptr) {
-        printf("yallaaahoooaaayyyy!\n");
+    music = Mix_LoadMUS("./assets/m.mp3");
+    if (!music)
+    {
+        std::cout << "Failed to load music: " << Mix_GetError() << std::endl;
     }
     // Load textures for the Player facing left and right, and background
     SDL_Surface* surfaceBackground = IMG_Load("./assets/background1.png");

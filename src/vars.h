@@ -171,7 +171,7 @@ SDL_Texture* soundOFF = nullptr;
 SDL_Texture* scroll_1 = nullptr;
 SDL_Texture* scroll_2 = nullptr;
 
-Mix_Music* music;
+Mix_Music* music = nullptr;
 
 // Struct to represent the player with various attributes
 struct Player
