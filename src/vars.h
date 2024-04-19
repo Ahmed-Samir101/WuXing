@@ -11,8 +11,8 @@
 
 const int WINDOW_WIDTH = 1080;
 const int WINDOW_HEIGHT = 700;
-const int PLAYER_WIDTH = 100;
-const int PLAYER_HEIGHT = 100;
+const int PLAYER_WIDTH = 231;
+const int PLAYER_HEIGHT = 231;
 const int FRAME_WIDTH = 120;  // Width of each frame in the sprite sheet
 const int FRAME_HEIGHT = 120; // Height of each frame in the sprite sheet
 const int ATTACK_RANGE = 300; // 假设敌人攻击范围为100像素
@@ -226,7 +226,7 @@ struct Bending
     SDL_Texture* texture;
 };
 
-Player player = { 100, 100, 0, 0, false, false, false, 0, 100, 0,false, false, 32, 32}; // Initialize the player object
+Player player = { 100, 100, 0, 0, false, false, false, 0, 100, 0,false, false, 180, 192}; // Initialize the player object
 Enemy enemy = { 500, 310, 0, 0, false, false, false, 0, 100, false, 1, 130, 128, 8, 4, 2 };
 
 Bending playerbend = { 0, 53, 53, 10, false, 1, 110, 125, 125, nullptr };
