@@ -237,8 +237,18 @@ int main(int argc, char* argv[]) {
                     renderWinAndScroll(renderer, scroll_1);
                 }
                 else if(mission == SECOND) {
+                    renderWinAndScroll(renderer, scroll_4);
+                }
+                else if(mission == FOURTH) {
                     renderWinAndScroll(renderer, scroll_2);
-                } else {
+                }
+                else if(mission == SIXTH ) {
+                    renderWinAndScroll(renderer, scroll_3);
+                }
+                else if(mission == EIGHT) {
+                    renderWinAndScroll(renderer, scroll_5);
+                }
+                 else {
                     renderYouWin();
                 }
                 handleInputatYouwin();

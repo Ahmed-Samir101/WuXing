@@ -80,6 +80,12 @@ void setup() {
     SDL_Surface* surfaceFifteenthWinMap = IMG_Load("./assets/Map29.png");
     SDL_Surface* surfaceYouWin = IMG_Load("./assets/youwin.jpg");
     SDL_Surface* surfaceHeart = IMG_Load("./assets/heart.png");
+    SDL_Surface* surfaceScroll1 = IMG_Load("./assets/scroll1.png");
+    SDL_Surface* surfaceScroll2 = IMG_Load("./assets/scroll2.png");
+    SDL_Surface* surfaceScroll3 = IMG_Load("./assets/scroll3.png");
+    SDL_Surface* surfaceScroll4 = IMG_Load("./assets/scroll4.png");
+    SDL_Surface* surfaceScroll5 = IMG_Load("./assets/scroll5.png");
+    SDL_Surface* surfaceScroll6 = IMG_Load("./assets/scroll6.png");
 
 
     // Create textures from loaded surfaces
@@ -139,6 +145,12 @@ void setup() {
     fourteenthwin = SDL_CreateTextureFromSurface(renderer, surfaceFourteenthWinMap);
     fifteenth = SDL_CreateTextureFromSurface(renderer, surfaceFifteenthWinMap);
     youwin = SDL_CreateTextureFromSurface(renderer, surfaceYouWin);
+    scroll_1 = SDL_CreateTextureFromSurface(renderer, surfaceScroll1);
+    scroll_2 = SDL_CreateTextureFromSurface(renderer, surfaceScroll2);
+    scroll_3 = SDL_CreateTextureFromSurface(renderer, surfaceScroll3);
+    scroll_4 = SDL_CreateTextureFromSurface(renderer, surfaceScroll4);
+    scroll_5 = SDL_CreateTextureFromSurface(renderer, surfaceScroll5);
+    scroll_6 = SDL_CreateTextureFromSurface(renderer, surfaceScroll6);
 
 }
 
@@ -330,6 +342,41 @@ void  renderRealHelp(SDL_Renderer* renderer) {
         SDL_RenderCopy(renderer, returnback, NULL, &returnbackButton);
     }
 
+}
+
+void  renderWinAndScroll(SDL_Renderer* renderer, SDL_Texture* scroll) {
+    if (!youwinRendered) {
+        for (int i = 0; i <= 255; i++) {
+            SDL_RenderCopy(renderer, backgroundTexture, NULL, &rect); // 绘制背景
+            SDL_SetTextureAlphaMod(youwin, i); // 设置youwin的透明度
+            SDL_RenderCopy(renderer, youwin, NULL, &youwinRect); // 绘制youwin
+            SDL_RenderPresent(renderer); // 更新渲染器
+            SDL_Delay(4); // 小延时
+        }
+
+        // 在继续之前确保youwin保持显示
+        SDL_SetTextureAlphaMod(youwin, 255); // 确保youwin完全不透明
+        SDL_RenderCopy(renderer, backgroundTexture, NULL, &rect); // 重新绘制背景
+        SDL_RenderCopy(renderer, youwin, NULL, &youwinRect); // 重新绘制youwin
+
+        // 然后开始逐渐显示scroll
+        for (int i = 0; i <= 255; i++) {
+            SDL_RenderCopy(renderer, backgroundTexture, NULL, &rect); // 再次绘制背景
+            SDL_RenderCopy(renderer, youwin, NULL, &youwinRect); // 保持youwin显示
+            SDL_SetTextureAlphaMod(scroll, i); // 设置scroll的透明度
+            SDL_RenderCopy(renderer, scroll, NULL, &scrollRect); // 绘制scroll
+            SDL_RenderPresent(renderer); // 更新渲染器
+            SDL_Delay(4); // 小延时
+        }
+
+        // 最后确保scroll也保持显示
+        SDL_SetTextureAlphaMod(scroll, 255); // 确保scroll完全不透明
+        youwinRendered = true;
+    }
+    SDL_RenderCopy(renderer, backgroundTexture, NULL, &rect); // 最后一次绘制背景
+    SDL_RenderCopy(renderer, youwin, NULL, &youwinRect); // 确保youwin显示
+    SDL_RenderCopy(renderer, scroll, NULL, &scrollRect); // 确保scroll显示
+    SDL_RenderPresent(renderer); // 更新渲染器
 }
 
 void  renderYouWin(SDL_Renderer* renderer) {

@@ -1,6 +1,6 @@
 #include <iostream>
 #include <stdlib.h>
-#include <SDL2/SDL.h>
+#include <SDL2/SDL.h> // Working
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_ttf.h>
@@ -11,8 +11,8 @@
 
 const int WINDOW_WIDTH = 1080;
 const int WINDOW_HEIGHT = 700;
-const int PLAYER_WIDTH = 231;
-const int PLAYER_HEIGHT = 231;
+const int PLAYER_WIDTH = 100;
+const int PLAYER_HEIGHT = 100;
 const int FRAME_WIDTH = 120;  // Width of each frame in the sprite sheet
 const int FRAME_HEIGHT = 120; // Height of each frame in the sprite sheet
 const int ATTACK_RANGE = 300; // 假设敌人攻击范围为100像素
@@ -89,7 +89,7 @@ GameState gameState = MENU;
 int mission = ZERO;
 
 // SDL variables for window, renderer, and textures
-SDL_Surface* surfacePlayer = IMG_Load("./assets/sheet4.png");
+SDL_Surface* surfacePlayer = IMG_Load("./assets/mainChar.png");
 SDL_Surface* enemySurface1 = IMG_Load("./assets/enemySheet1.png");
 SDL_Surface* enemySurface2 = IMG_Load("./assets/enemySheet2.png");
 SDL_Surface* enemySurface3 = IMG_Load("./assets/enemySheet3.png");
@@ -170,6 +170,10 @@ SDL_Texture* soundON = nullptr;
 SDL_Texture* soundOFF = nullptr;
 SDL_Texture* scroll_1 = nullptr;
 SDL_Texture* scroll_2 = nullptr;
+SDL_Texture* scroll_3 = nullptr;
+SDL_Texture* scroll_4 = nullptr;
+SDL_Texture* scroll_5 = nullptr;
+SDL_Texture* scroll_6 = nullptr;
 
 Mix_Music* music = nullptr;
 
