@@ -17,7 +17,7 @@ const int FRAME_WIDTH = 120;  // Width of each frame in the sprite sheet
 const int FRAME_HEIGHT = 120; // Height of each frame in the sprite sheet
 const int ATTACK_RANGE = 300; // 假设敌人攻击范围为100像素
 const int JUMP_FORCE = 23;
-const int NUM_FRAMES = 8; // Number of animation frames in the sprite sheet
+const int NUM_FRAMES = 9; // Number of animation frames in the sprite sheet
 const int PLAYERSPEED = 6;
 const int ENEMYSPEED = 1;
 const int GRAVITY = 1;
@@ -89,7 +89,7 @@ GameState gameState = MENU;
 int mission = ZERO;
 
 // SDL variables for window, renderer, and textures
-SDL_Surface* surfacePlayer = IMG_Load("./assets/mainChar.png");
+SDL_Surface* surfacePlayer = IMG_Load("./assets/sheet4.png");
 SDL_Surface* enemySurface1 = IMG_Load("./assets/enemySheet1.png");
 SDL_Surface* enemySurface2 = IMG_Load("./assets/enemySheet2.png");
 SDL_Surface* enemySurface3 = IMG_Load("./assets/enemySheet3.png");
@@ -226,7 +226,7 @@ struct Bending
     SDL_Texture* texture;
 };
 
-Player player = { 100, 100, 0, 0, false, false, false, 0, 100, 0,false, false, 180, 192}; // Initialize the player object
+Player player = { 100, 100, 0, 0, false, false, false, 0, 100, 0,false, false, 180, 172}; // Initialize the player object
 Enemy enemy = { 500, 310, 0, 0, false, false, false, 0, 100, false, 1, 130, 128, 8, 4, 2 };
 
 Bending playerbend = { 0, 53, 53, 10, false, 1, 110, 125, 125, nullptr };

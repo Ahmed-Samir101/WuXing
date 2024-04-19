@@ -196,18 +196,18 @@ void renderScene() {
 void renderPlayer()
 {
     SDL_Rect dstrectPlayer = { player.x, player.y, PLAYER_WIDTH, PLAYER_HEIGHT };
-    SDL_Rect srcRect = { fT1 * player.width, 3 * player.height, player.width, player.height };
-    SDL_Rect srcRect2 = { fT2 * 32, 0, 32, 32 };
-    SDL_Rect srcRect3 = { fT3 * 32, 4 * 32, 32, 32 };
-    SDL_Rect bend = { fT1 * 32, 8 * 32, 32, 32 };
-    SDL_Rect block = { fT1 * 32, 8 * 32, 32, 32 };
+    SDL_Rect srcRect  = { fT1 * player.width, 3 * player.height, player.width, player.height };
+    SDL_Rect srcRect2 = { fT2 * 180, 0, 180, 192 };
+    SDL_Rect srcRect3 = { fT3 * 180, 8 * 180, 180, 192 };
+    SDL_Rect bend     = { fT1 * 180, 8 * 180, 180, 192 };
+    SDL_Rect block    = { fT1 * 180, 8 * 180, 180, 192 };
     static Uint32 StartTime1 = SDL_GetTicks();
 
     Uint32 currentTime = SDL_GetTicks();
     float deltaTime = (currentTime - StartTime1) / 150.0f;
 
     fT1 = static_cast<int>(deltaTime) % 8;
-    fT2 = static_cast<int>(deltaTime) % 2;
+    fT2 = static_cast<int>(deltaTime) % 8;
     fT3 = static_cast<int>(deltaTime) % 6;
 
     SDL_RendererFlip flipType = SDL_FLIP_NONE;
